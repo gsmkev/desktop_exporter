@@ -12,7 +12,6 @@ from datetime import date
 from PIL import Image, ImageTk
 
 from desktop_exporter.api import AjaxAPI
-from desktop_exporter.dbf_writer import write_dbf_pair
 from desktop_exporter.ui.login import LoginDialog
 from desktop_exporter.ui.settings import open_settings as open_settings_dialog
 from desktop_exporter.ui.dashboard import Dashboard
