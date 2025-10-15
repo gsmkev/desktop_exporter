@@ -12,6 +12,7 @@ from datetime import date
 from PIL import Image, ImageTk
 
 from desktop_exporter.api import AjaxAPI
+from desktop_exporter.config import load_config, save_config
 from desktop_exporter.ui.login import LoginDialog
 from desktop_exporter.ui.settings import open_settings as open_settings_dialog
 from desktop_exporter.ui.dashboard import Dashboard
@@ -38,7 +39,9 @@ class App(tb.Window):
         self.user_label = tb.Label(self.header, textvariable=self.var_user_email)
 
         # API config
-        self.var_base = tk.StringVar(value=os.getenv("AJAX_API_BASE", "https://ajax-erp-2c56bc9ad64c.herokuapp.com"))
+        cfg = load_config()
+        default_base = os.getenv("AJAX_API_BASE", "https://ajax-erp-2c56bc9ad64c.herokuapp.com")
+        self.var_base = tk.StringVar(value=str(cfg.get("AJAX_API_BASE", default_base)))
         self.var_token = tk.StringVar(value=os.getenv("AJAX_API_TOKEN", ""))
         self.var_desde = tk.StringVar(value=str(date.today()))
         self.var_hasta = tk.StringVar(value=str(date.today()))
@@ -197,6 +200,10 @@ class App(tb.Window):
 
     def open_settings(self, event=None) -> None:
         open_settings_dialog(self, self.var_base)
+        # Persist the new base URL after closing settings
+        cfg = load_config()
+        cfg["AJAX_API_BASE"] = self.var_base.get().strip()
+        save_config(cfg)
 
     def on_export(self) -> None:
         try:
